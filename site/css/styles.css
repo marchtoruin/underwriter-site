@@ -16,6 +16,8 @@
   --border: #2a2a2a;
   --player-track: #222;
   --player-fill: #c8102e;
+  --surface-shadow: rgba(0, 0, 0, 0.34);
+  --surface-shadow-soft: rgba(0, 0, 0, 0.18);
 }
 
 html {
@@ -25,12 +27,36 @@ html {
 
 body {
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.012), rgba(255, 255, 255, 0) 38%),
+    radial-gradient(120% 100% at 14% 12%, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0) 68%),
+    radial-gradient(110% 95% at 88% 78%, rgba(200, 16, 46, 0.016), rgba(200, 16, 46, 0) 72%);
+  position: relative;
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Extremely subtle grain pass for slight material depth. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.014;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.85'/%3E%3C/svg%3E");
+}
+
+
+.site-header,
+main,
+.site-footer {
+  position: relative;
+  z-index: 2;
 }
 
 a {
@@ -99,15 +125,18 @@ button {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 0;
-  height: 2px;
+  width: 100%;
+  height: 1px;
   background: var(--accent);
-  transition: width 0.3s;
+  opacity: 0.9;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.2s ease-out;
 }
 
 .site-nav a:hover::after,
 .site-nav a.active::after {
-  width: 100%;
+  transform: scaleX(1);
 }
 
 /* ── Layout ────────────────────────────────────────────── */
@@ -135,6 +164,8 @@ main {
   text-transform: uppercase;
   line-height: 1.1;
   margin-bottom: 0.5rem;
+  color: #e5e5e5;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .hero .ep-title {
@@ -157,6 +188,9 @@ main {
   padding: 2rem;
   max-width: 600px;
   margin: 0 auto;
+  box-shadow:
+    0 10px 24px var(--surface-shadow),
+    0 2px 7px var(--surface-shadow-soft);
 }
 
 .player-track-title {
@@ -313,7 +347,7 @@ main {
   padding: 0.75rem 0.5rem;
   border-bottom: 1px solid var(--border);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s ease, color 0.2s ease;
   border-radius: 4px;
   gap: 0.75rem;
 }
@@ -340,6 +374,33 @@ main {
 
 .tracklist .track-name {
   flex: 1;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.tracklist .track-name::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.08rem;
+  width: 100%;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.2s ease-out;
+}
+
+.tracklist li:hover .track-name {
+  color: #ededed;
+}
+
+.tracklist li:hover .track-name::after {
+  transform: scaleX(1);
+}
+
+.tracklist li.active .track-name::after {
+  transform: scaleX(1);
 }
 
 /* ── Social Links ──────────────────────────────────────── */
@@ -364,19 +425,31 @@ main {
 }
 
 .social-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   font-size: 0.9rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 0.6rem 1.25rem;
   border: 1px solid var(--border);
   border-radius: 4px;
+  color: #d7d7d7;
   transition: border-color 0.2s, color 0.2s, background 0.2s;
 }
 
 .social-links a:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: rgba(200, 16, 46, 0.06);
+  border-color: #454545;
+  color: #f0f0f0;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.social-links .social-icon {
+  width: 18px;
+  height: 18px;
+  color: currentColor;
+  flex-shrink: 0;
 }
 
 /* ── Footer ────────────────────────────────────────────── */
