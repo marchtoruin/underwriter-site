@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Underwriter — Visuals</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">Underwriter</a>
+      <nav class="site-nav">
+        <a href="index.html">Home</a>
+        <a href="visuals.html" class="active">Visuals</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Gallery -->
+    <section class="gallery-section">
+      <div class="container">
+        <h2>Visuals</h2>
+        <div class="gallery-grid" id="gallery-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox-overlay" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+    <img id="lightbox-img" src="" alt="Lightbox image">
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    &copy; 2026 Underwriter. All rights reserved.
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var imageCount = 9;
+      var grid = document.getElementById("gallery-grid");
+      var lightbox = document.getElementById("lightbox");
+      var lightboxImg = document.getElementById("lightbox-img");
+      var lightboxClose = document.getElementById("lightbox-close");
+
+      /* Build gallery items */
+      for (var i = 1; i <= imageCount; i++) {
+        var src = "assets/img/photo" + i + ".jpg";
+        var item = document.createElement("div");
+        item.className = "gallery-item";
+        item.setAttribute("data-src", src);
+
+        var img = document.createElement("img");
+        img.src = src;
+        img.alt = "Photo " + i;
+        img.loading = "lazy";
+
+        /* Show placeholder on error (missing images) */
+        img.onerror = function () {
+          var placeholder = document.createElement("div");
+          placeholder.className = "img-placeholder";
+          placeholder.textContent = "IMAGE";
+          this.parentElement.replaceChild(placeholder, this);
+        };
+
+        item.appendChild(img);
+        grid.appendChild(item);
+      }
+
+      /* Open lightbox */
+      grid.addEventListener("click", function (e) {
+        var item = e.target.closest(".gallery-item");
+        if (!item) return;
+        var src = item.getAttribute("data-src");
+        lightboxImg.src = src;
+        lightbox.classList.add("open");
+      });
+
+      /* Close lightbox */
+      function closeLightbox() {
+        lightbox.classList.remove("open");
+        lightboxImg.src = "";
+      }
+
+      lightboxClose.addEventListener("click", closeLightbox);
+
+      lightbox.addEventListener("click", function (e) {
+        if (e.target === lightbox) closeLightbox();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeLightbox();
+      });
+    })();
+  </script>
+</body>
+</html>
