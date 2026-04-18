@@ -25,7 +25,35 @@
     <section class="gallery-section">
       <div class="container">
         <h2>Visuals</h2>
-        <div class="gallery-grid" id="gallery-grid"></div>
+        <div class="gallery-grid" id="gallery-grid">
+          <article class="gallery-item large orientation-auto" data-src="assets/img/photo1.jpg">
+            <img src="assets/img/photo1.jpg" alt="Featured visual 1" loading="lazy">
+          </article>
+          <article class="gallery-item wide orientation-auto" data-src="assets/img/photo2.jpg">
+            <img src="assets/img/photo2.jpg" alt="Visual 2" loading="lazy">
+          </article>
+          <article class="gallery-item wide orientation-auto" data-src="assets/img/photo3.jpg">
+            <img src="assets/img/photo3.jpg" alt="Visual 3" loading="lazy">
+          </article>
+          <article class="gallery-item standard orientation-auto" data-src="assets/img/photo4.jpg">
+            <img src="assets/img/photo4.jpg" alt="Visual 4" loading="lazy">
+          </article>
+          <article class="gallery-item tall orientation-auto" data-src="assets/img/photo5.jpg">
+            <img src="assets/img/photo5.jpg" alt="Visual 5" loading="lazy">
+          </article>
+          <article class="gallery-item large orientation-auto" data-src="assets/img/photo6.jpg">
+            <img src="assets/img/photo6.jpg" alt="Visual 6" loading="lazy">
+          </article>
+          <article class="gallery-item tall orientation-auto" data-src="assets/img/photo7.jpg">
+            <img src="assets/img/photo7.jpg" alt="Visual 7" loading="lazy">
+          </article>
+          <article class="gallery-item standard orientation-auto" data-src="assets/img/photo8.jpg">
+            <img src="assets/img/photo8.jpg" alt="Visual 8" loading="lazy">
+          </article>
+          <article class="gallery-item wide orientation-auto" data-src="assets/img/photo9.jpg">
+            <img src="assets/img/photo9.jpg" alt="Visual 9" loading="lazy">
+          </article>
+        </div>
       </div>
     </section>
 
@@ -46,35 +74,45 @@
     (function () {
       "use strict";
 
-      var imageCount = 9;
       var grid = document.getElementById("gallery-grid");
       var lightbox = document.getElementById("lightbox");
       var lightboxImg = document.getElementById("lightbox-img");
       var lightboxClose = document.getElementById("lightbox-close");
 
-      /* Build gallery items */
-      for (var i = 1; i <= imageCount; i++) {
-        var src = "assets/img/photo" + i + ".jpg";
-        var item = document.createElement("div");
-        item.className = "gallery-item";
-        item.setAttribute("data-src", src);
+      function applyOrientationClass(item, img) {
+        item.classList.remove("landscape", "portrait", "square");
+        if (!img.naturalWidth || !img.naturalHeight) return;
 
-        var img = document.createElement("img");
-        img.src = src;
-        img.alt = "Photo " + i;
-        img.loading = "lazy";
+        var ratio = img.naturalWidth / img.naturalHeight;
 
-        /* Show placeholder on error (missing images) */
+        if (ratio >= 1.08) {
+          item.classList.add("landscape");
+        } else if (ratio <= 0.92) {
+          item.classList.add("portrait");
+        } else {
+          item.classList.add("square");
+        }
+      }
+
+      /* Show placeholder on error (missing images) */
+      grid.querySelectorAll(".gallery-item img").forEach(function (img) {
+        var item = img.closest(".gallery-item");
+
+        if (img.complete && img.naturalWidth > 0) {
+          applyOrientationClass(item, img);
+        } else {
+          img.addEventListener("load", function () {
+            applyOrientationClass(item, img);
+          });
+        }
+
         img.onerror = function () {
           var placeholder = document.createElement("div");
           placeholder.className = "img-placeholder";
           placeholder.textContent = "IMAGE";
           this.parentElement.replaceChild(placeholder, this);
         };
-
-        item.appendChild(img);
-        grid.appendChild(item);
-      }
+      });
 
       /* Open lightbox */
       grid.addEventListener("click", function (e) {
