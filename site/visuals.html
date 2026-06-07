@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Underwriter — Visuals</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="logo">Underwriter</a>
+      <nav class="site-nav">
+        <a href="index.html">Home</a>
+        <a href="visuals.html" class="active">Visuals</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Gallery -->
+    <section class="gallery-section">
+      <div class="container">
+        <h2>Visuals</h2>
+        <div class="gallery-grid" id="gallery-grid">
+          <article class="gallery-item large orientation-auto" data-src="assets/img/photo1.jpg">
+            <img src="assets/img/photo1.jpg" alt="Featured visual 1" loading="lazy">
+          </article>
+          <article class="gallery-item wide orientation-auto" data-src="assets/img/photo2.jpg">
+            <img src="assets/img/photo2.jpg" alt="Visual 2" loading="lazy">
+          </article>
+          <article class="gallery-item wide orientation-auto" data-src="assets/img/photo3.jpg">
+            <img src="assets/img/photo3.jpg" alt="Visual 3" loading="lazy">
+          </article>
+          <article class="gallery-item standard orientation-auto" data-src="assets/img/photo4.jpg">
+            <img src="assets/img/photo4.jpg" alt="Visual 4" loading="lazy">
+          </article>
+          <article class="gallery-item tall orientation-auto" data-src="assets/img/photo5.jpg">
+            <img src="assets/img/photo5.jpg" alt="Visual 5" loading="lazy">
+          </article>
+          <article class="gallery-item large orientation-auto" data-src="assets/img/photo6.jpg">
+            <img src="assets/img/photo6.jpg" alt="Visual 6" loading="lazy">
+          </article>
+          <article class="gallery-item tall orientation-auto" data-src="assets/img/photo7.jpg">
+            <img src="assets/img/photo7.jpg" alt="Visual 7" loading="lazy">
+          </article>
+          <article class="gallery-item standard orientation-auto" data-src="assets/img/photo8.jpg">
+            <img src="assets/img/photo8.jpg" alt="Visual 8" loading="lazy">
+          </article>
+          <article class="gallery-item wide orientation-auto" data-src="assets/img/photo9.jpg">
+            <img src="assets/img/photo9.jpg" alt="Visual 9" loading="lazy">
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox-overlay" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+    <img id="lightbox-img" src="" alt="Lightbox image">
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    &copy; 2026 Underwriter. All rights reserved.
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var grid = document.getElementById("gallery-grid");
+      var lightbox = document.getElementById("lightbox");
+      var lightboxImg = document.getElementById("lightbox-img");
+      var lightboxClose = document.getElementById("lightbox-close");
+
+      function applyOrientationClass(item, img) {
+        item.classList.remove("landscape", "portrait", "square");
+        if (!img.naturalWidth || !img.naturalHeight) return;
+
+        var ratio = img.naturalWidth / img.naturalHeight;
+
+        if (ratio >= 1.08) {
+          item.classList.add("landscape");
+        } else if (ratio <= 0.92) {
+          item.classList.add("portrait");
+        } else {
+          item.classList.add("square");
+        }
+      }
+
+      /* Show placeholder on error (missing images) */
+      grid.querySelectorAll(".gallery-item img").forEach(function (img) {
+        var item = img.closest(".gallery-item");
+
+        if (img.complete && img.naturalWidth > 0) {
+          applyOrientationClass(item, img);
+        } else {
+          img.addEventListener("load", function () {
+            applyOrientationClass(item, img);
+          });
+        }
+
+        img.onerror = function () {
+          var placeholder = document.createElement("div");
+          placeholder.className = "img-placeholder";
+          placeholder.textContent = "IMAGE";
+          this.parentElement.replaceChild(placeholder, this);
+        };
+      });
+
+      /* Open lightbox */
+      grid.addEventListener("click", function (e) {
+        var item = e.target.closest(".gallery-item");
+        if (!item) return;
+        var src = item.getAttribute("data-src");
+        lightboxImg.src = src;
+        lightbox.classList.add("open");
+      });
+
+      /* Close lightbox */
+      function closeLightbox() {
+        lightbox.classList.remove("open");
+        lightboxImg.src = "";
+      }
+
+      lightboxClose.addEventListener("click", closeLightbox);
+
+      lightbox.addEventListener("click", function (e) {
+        if (e.target === lightbox) closeLightbox();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeLightbox();
+      });
+    })();
+  </script>
+</body>
+</html>
